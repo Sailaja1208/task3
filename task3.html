@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Styling and JavaScript</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f4f8;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    section {
+      background-color: #ffffff;
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 700px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #00695c;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 10px 0;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004d40;
+    }
+
+    .result, .joke {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    /* Quiz styling */
+    .option-btn {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #aed581;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .option-btn:hover {
+      background-color: #9ccc65;
+    }
+
+    #next-btn {
+      margin-top: 20px;
+      background-color: #689f38;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #score {
+      font-size: 1.2em;
+      color: #1b5e20;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      section {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Advanced Styling and JavaScript</h1>
+
+  <!-- Section 1: Responsive Design -->
+  <section>
+    <h2>1. Responsive Design</h2>
+    <p>This layout and typography adjust based on your screen size. Resize the window or try on mobile to see responsiveness.</p>
+  </section>
+
+  <!-- Section 2: JavaScript Quiz -->
+  <section>
+    <h2>2. JavaScript Quiz</h2>
+    <p id="question">Loading...</p>
+    <div id="options"></div>
+    <button id="next-btn" onclick="nextQuestion()">Next</button>
+    <div id="score"></div>
+  </section>
+
+  <!-- Section 3: API Fetch -->
+  <section>
+    <h2>3. Fetch a Random Joke</h2>
+    <button onclick="getJoke()">Get a Joke</button>
+    <div id="jokeDisplay" class="joke">Your joke will appear here...</div>
+  </section>
+
+  <script>
+    // QUIZ SCRIPT
+    const quizData = [
+      {
+        question: "1. What does HTML stand for?",
+        options: [
+          "Hyper Text Markup Language",
+          "Home Tool Markup Language",
+          "Hyperlinks and Text Markup Language",
+          "Hyper Tool Made Language"
+        ],
+        answer: "Hyper Text Markup Language"
+      },
+      {
+        question: "2. What does CSS stand for?",
+        options: [
+          "Creative Style Sheets",
+          "Cascading Style Sheets",
+          "Computer Style Sheets",
+          "Colorful Style Sheets"
+        ],
+        answer: "Cascading Style Sheets"
+      },
+      {
+        question: "3. Inside which HTML element do we put the JavaScript?",
+        options: [
+          "<js>",
+          "<scripting>",
+          "<script>",
+          "<javascript>"
+        ],
+        answer: "<script>"
+      },
+      {
+        question: "4. Which symbol is used for comments in JavaScript?",
+        options: [
+          "// This is a comment",
+          "# This is a comment",
+          "<!-- This is a comment -->",
+          "** This is a comment"
+        ],
+        answer: "// This is a comment"
+      },
+      {
+        question: "5. Which method is used to fetch data from an API?",
+        options: [
+          "getData()",
+          "fetch()",
+          "receive()",
+          "loadData()"
+        ],
+        answer: "fetch()"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const questionEl = document.getElementById("question");
+      const optionsEl = document.getElementById("options");
+      const current = quizData[currentQuestion];
+
+      questionEl.textContent = current.question;
+      optionsEl.innerHTML = "";
+
+      current.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.className = "option-btn";
+        btn.onclick = () => checkAnswer(option);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correct = quizData[currentQuestion].answer;
+      if (selected === correct) {
+        score++;
+      }
+
+      document.querySelectorAll(".option-btn").forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correct) {
+          btn.style.backgroundColor = "#8bc34a";
+        } else if (btn.textContent === selected) {
+          btn.style.backgroundColor = "#e57373";
+        }
+      });
+
+      document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      document.getElementById("next-btn").style.display = "none";
+
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("question").textContent = "🎉 Quiz Completed!";
+        document.getElementById("options").innerHTML = "";
+        document.getElementById("score").textContent = `✅ You scored ${score} out of ${quizData.length}`;
+      }
+    }
+
+    // Initial load
+    window.onload = () => {
+      loadQuestion();
+      document.getElementById("next-btn").style.display = "none";
+    };
+
+    // API FETCH SCRIPT
+    async function getJoke() {
+      try {
+        const response = await fetch('https://official-joke-api.appspot.com/random_joke');
+        const joke = await response.json();
+        document.getElementById('jokeDisplay').textContent = `${joke.setup} 😂 ${joke.punchline}`;
+      } catch (error) {
+        document.getElementById('jokeDisplay').textContent = '⚠️ Failed to load joke.';
+      }
+    }
+  </script>
+
+</body>
+</html>
